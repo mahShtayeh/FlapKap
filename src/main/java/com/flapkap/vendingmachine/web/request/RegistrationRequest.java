@@ -1,6 +1,6 @@
 package com.flapkap.vendingmachine.web.request;
 
-import com.flapkap.vendingmachine.model.UserRole;
+import com.flapkap.vendingmachine.model.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -29,6 +29,9 @@ public record RegistrationRequest(
 
         @Schema(description = "User role", example = "BUYER")
         @NotNull(message = "error.user.missingRole")
-        UserRole role
+        Role role,
+
+        @Schema(description = "User enabled", example = "true")
+        Boolean enabled
 ) {
 }

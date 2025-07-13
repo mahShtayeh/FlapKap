@@ -1,6 +1,6 @@
 package com.flapkap.vendingmachine.dto;
 
-import com.flapkap.vendingmachine.model.UserRole;
+import com.flapkap.vendingmachine.model.Role;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -10,6 +10,7 @@ public record UserDTO(
         String username,
         String password,
         BigDecimal deposit,
-        UserRole role
+        Role role,
+        boolean enabled
 ) {
 }

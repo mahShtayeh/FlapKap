@@ -1,9 +1,13 @@
 package com.flapkap.vendingmachine.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.NoArgsConstructor;
 
 /**
@@ -26,7 +30,18 @@ import lombok.NoArgsConstructor;
                         name = "Apache 2.0",
                         url = "https://www.apache.org/licenses/LICENSE-2.0.html"
                 )
-        )
+        ),
+        security = {
+                @SecurityRequirement(name = "bearerAuth")
+        }
+)
+@SecurityScheme(
+        name = "bearerAuth",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        scheme = "bearer",
+        description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
+        in = SecuritySchemeIn.HEADER
 )
 @NoArgsConstructor
 public class OpenApiConfig {

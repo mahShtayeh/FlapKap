@@ -23,4 +23,13 @@ public interface UserService {
      * @return the unique {@link UUID} identifier of the newly created user
      */
     UUID register(UserDTO userDTO);
+
+    /**
+     * Authenticates a user based on the provided credentials and returns an access token upon successful login.
+     *
+     * @param userDTO the Data Transfer Object containing the user's login credentials, such as username and password.
+     *                Must not be null and must contain valid credential data.
+     * @return a string representing the generated access token for the authenticated user.
+     */
+    String login(UserDTO userDTO);
 }

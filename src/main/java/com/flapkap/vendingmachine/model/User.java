@@ -26,7 +26,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "\"USER\"") // user is preserved keyword in PostgreSQL
-public class User {
+public class User extends Auditable {
     /**
      * A unique identifier for the User entity.
      * This identifier is automatically generated using the UUID strategy.
@@ -41,6 +41,7 @@ public class User {
      */
     @NotEmpty(message = "error.user.missingOrEmptyEmail")
     @Email(message = "error.user.invalidEmail")
+    @Column(nullable = false, unique = true)
     private String username;
 
     /**
@@ -49,6 +50,7 @@ public class User {
      * to ensure confidentiality and prevent unauthorized access.
      */
     @NotEmpty(message = "error.user.missingOrEmptyPassword")
+    @Column(nullable = false)
     private String password;
 
     /**
@@ -61,12 +63,19 @@ public class User {
     private BigDecimal deposit;
 
     /**
-     * Represents the role assigned to the user.
-     * This attribute defines whether the user acts as a `BUYER` or `SELLER`
-     * within the vending machine system. The role determines the user's
-     * permissions and available actions in the application.
+     * Indicates whether the user account is enabled or active.
+     * A `true` value signifies that the account is active and can interact with the system,
+     * while a `false` value indicates that the account is disabled or inactive.
      */
+    private boolean enabled;
+
+    /**
+     * Represents the role of the user within the vending machine system.
+     * The role determines the user's level of access and the actions they are
+     * authorized to perform. Supported values are defined in the {@link Role} enum,
+     * which include roles such as BUYER and SELLER.
+     */
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "error.user.missingRole")
-    private UserRole role;
+    private Role role;
 }
