@@ -4,9 +4,11 @@ import com.flapkap.vendingmachine.dto.ProductDTO;
 import com.flapkap.vendingmachine.model.Product;
 import com.flapkap.vendingmachine.model.User;
 import com.flapkap.vendingmachine.web.request.ProductCreationRequest;
+import com.flapkap.vendingmachine.web.response.ProductResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -43,4 +45,14 @@ public interface ProductMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "seller", source = "seller")
     Product toEntity(ProductDTO productDTO, User seller);
+
+    /**
+     * Converts a list of {@link Product} entities into a list of {@link ProductResponse} objects.
+     * This method is used to transform product data into a format suitable for API responses.
+     *
+     * @param products a list of {@link Product} entities containing product details
+     *                 such as id, name, cost, amount, and description.
+     * @return a list of {@link ProductResponse} objects representing the converted product details.
+     */
+    List<ProductResponse> toResponseList(List<Product> products);
 }

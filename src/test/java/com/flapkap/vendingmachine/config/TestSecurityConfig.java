@@ -51,7 +51,7 @@ public class TestSecurityConfig {
 
     /**
      * Represents the static username of a seller used in the application's authentication and authorization process.
-     * This constant is primarily utilized to populate mock data associated with the seller during various tests.
+     * This constant is primarily used to populate mock data associated with the seller during various tests.
      * For instance, it is referenced as the username when building user credentials or principal in unit tests.
      */
     private static final String SELLER_USERNAME = "alen.martin@flapkap.com";

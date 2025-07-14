@@ -7,6 +7,7 @@ import com.flapkap.vendingmachine.model.Role;
 import com.flapkap.vendingmachine.model.User;
 import com.flapkap.vendingmachine.repository.ProductRepository;
 import com.flapkap.vendingmachine.service.impl.ProductServiceImpl;
+import com.flapkap.vendingmachine.web.response.ProductResponse;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -193,6 +195,21 @@ class ProductServiceTest {
             .build();
 
     /**
+     * A static and immutable reference to a pre-configured instance of {@link ProductResponse}.
+     * This instance is built using the {@link ProductResponse#builder()} method, and it contains
+     * predefined details such as product ID, name, available amount, cost, and description.
+     * It is primarily used in test scenarios within {@code ProductServiceTest} to validate
+     * product-related functionalities and outputs.
+     */
+    private static final ProductResponse PRODUCT_RESPONSE = ProductResponse.builder()
+            .id(PRODUCT_ID)
+            .name(PRODUCT_NAME)
+            .amount(PRODUCT_AMOUNT)
+            .cost(PRODUCT_COST)
+            .description(PRODUCT_DESCRIPTION)
+            .build();
+
+    /**
      * Tests the successful creation of a product with valid details.
      * This test verifies that when a valid `ProductDTO` is provided, the `create` method
      * in the `ProductService` correctly maps it to a `Product` entity, associates it with
@@ -208,5 +225,24 @@ class ProductServiceTest {
         final UUID productId = productService.create(PRODUCT_DTO);
 
         assertThat(productId).isEqualTo(PRODUCT_ID);
+    }
+
+    /**
+     * Tests the functionality of retrieving all products from the `ProductService`.
+     * The test ensures that:
+     * - The returned list is not null.
+     * - The size of the returned list matches the expected number of products.
+     * - The contents of the returned list match the expected `ProductResponse` objects.
+     */
+    @Test
+    void readAllProducts_shouldReturnListOfProducts() {
+        when(productRepository.findAll()).thenReturn(List.of(PRODUCT));
+        when(productMapper.toResponseList(List.of(PRODUCT))).thenReturn(List.of(PRODUCT_RESPONSE));
+
+        final List<ProductResponse> productResponseList = productService.readAll();
+
+        assertThat(productResponseList).isNotNull();
+        assertThat(productResponseList.size()).isEqualTo(1);
+        assertThat(productResponseList).isEqualTo(List.of(PRODUCT_RESPONSE));
     }
 }

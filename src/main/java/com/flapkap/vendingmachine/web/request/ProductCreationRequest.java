@@ -19,7 +19,7 @@ public record ProductCreationRequest(
         @NotEmpty(message = "error.product.missingOrEmptyName")
         String name,
 
-        @Schema(description = "Product cost", example = "15.0")
+        @Schema(description = "Product cost", example = "1500.0")
         @NotNull(message = "error.product.missingCost")
         @PositiveOrZero(message = "error.product.invalidCost")
         double cost,

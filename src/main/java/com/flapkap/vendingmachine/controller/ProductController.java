@@ -6,6 +6,7 @@ import com.flapkap.vendingmachine.service.ProductService;
 import com.flapkap.vendingmachine.web.RestResponse;
 import com.flapkap.vendingmachine.web.request.ProductCreationRequest;
 import com.flapkap.vendingmachine.web.response.ProductCreationResponse;
+import com.flapkap.vendingmachine.web.response.ProductResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -18,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -30,11 +32,7 @@ import java.util.UUID;
 @Tag(name = "Product Management", description = "Endpoints for product management")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(
-        path = "/api/v1/products",
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        consumes = MediaType.APPLICATION_JSON_VALUE
-)
+@RequestMapping("/api/v1/products")
 public class ProductController {
     /**
      * A service layer dependency responsible for handling business logic related to product operations.
@@ -61,17 +59,28 @@ public class ProductController {
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponse(responseCode = "201", description = "Product created successfully")
     @PreAuthorize("hasRole('SELLER')")
-    @PostMapping
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public RestResponse<ProductCreationResponse> create(@Valid @RequestBody final ProductCreationRequest request,
                                                         @AuthenticationPrincipal final UserPrincipal seller) {
         final UUID productId = productService.create(productMapper.toDTO(request, seller.getId()));
         return RestResponse.ok(ProductCreationResponse.builder()
-                        .productId(productId)
+                .productId(productId)
                 .build());
     }
 
-    // todo: List products API
+    /**
+     * Retrieves a list of all products available in the system.
+     *
+     * @return a RestResponse containing a list of ProductDTO objects representing all products.
+     */
+    @Operation(summary = "Read all products")
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponse<List<ProductResponse>> readAll() {
+        return RestResponse.ok(productService.readAll());
+    }
+
     // todo: Update Product - SELLER
     // todo: Delete Product - SELLER
 }

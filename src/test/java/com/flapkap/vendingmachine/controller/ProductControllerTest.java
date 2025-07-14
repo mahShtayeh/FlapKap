@@ -5,6 +5,7 @@ import com.flapkap.vendingmachine.mapper.ProductMapper;
 import com.flapkap.vendingmachine.service.ProductService;
 import com.flapkap.vendingmachine.service.UserService;
 import com.flapkap.vendingmachine.web.request.ProductCreationRequest;
+import com.flapkap.vendingmachine.web.response.ProductResponse;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
@@ -16,6 +17,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.*;
 import com.fasterxml.jackson.databind.*;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.BDDMockito.*;
@@ -116,6 +118,20 @@ class ProductControllerTest {
     private static final String JWT_MOCK = "Bearer mock.jwt.token";
 
     /**
+     * A constant instance of {@link ProductResponse} representing a predefined product response.
+     * This instance is initialized with statically defined values for product ID, name, amount, cost,
+     * and description. It is commonly used in tests to simulate a product response without relying
+     * on dynamic data or external systems.
+     */
+    private static final ProductResponse PRODUCT_RESPONSE = ProductResponse.builder()
+            .id(PRODUCT_ID)
+            .name(PRODUCT_NAME)
+            .amount(PRODUCT_AMOUNT)
+            .cost(PRODUCT_COST)
+            .description(PRODUCT_DESCRIPTION)
+            .build();
+
+    /**
      * Tests the successful creation of a product using the POST /api/products endpoint.
      * Validates the proper processing of the request and the expected response
      * when all required input data is provided and authorization is applied.
@@ -139,6 +155,29 @@ class ProductControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpectAll(
                         status().isCreated(),
-                        jsonPath("$.payload.productId").value(PRODUCT_ID.toString()));
+                        jsonPath("$.payload.productId").value(PRODUCT_ID.toString()),
+                        jsonPath("$.errors").isEmpty());
+    }
+
+    /**
+     * Tests the successful retrieval of all products using the GET /api/products endpoint.
+     * Mocks the behavior of the productService.readAll() method to return a predefined
+     * list of products. The test also verifies that proper request headers, including
+     * authorization, are included in the request.
+     */
+    @Test
+    @SneakyThrows
+    @DisplayName("GET /api/products - Success")
+    void readAllProducts_shouldReturn200() {
+        given(productService.readAll()).willReturn(List.of(PRODUCT_RESPONSE));
+
+        mockMvc.perform(get("/api/v1/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", JWT_MOCK))
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.payload").isArray(),
+                        jsonPath("$.payload.length()").value(1),
+                        jsonPath("$.errors").isEmpty());
     }
 }

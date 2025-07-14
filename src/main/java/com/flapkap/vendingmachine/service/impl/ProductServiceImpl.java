@@ -7,9 +7,12 @@ import com.flapkap.vendingmachine.model.User;
 import com.flapkap.vendingmachine.repository.ProductRepository;
 import com.flapkap.vendingmachine.service.ProductService;
 import com.flapkap.vendingmachine.service.UserService;
+import com.flapkap.vendingmachine.web.response.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,6 +23,7 @@ import java.util.UUID;
  *
  * @author Mahmoud Shtayeh
  */
+@Transactional
 @Service("productService")
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
@@ -62,5 +66,18 @@ public class ProductServiceImpl implements ProductService {
         final User seller = userService.read(productDTO.sellerId());
         final Product product = productMapper.toEntity(productDTO, seller);
         return productRepository.save(product).getId();
+    }
+
+    /**
+     * Retrieves a list of all products and maps them to their response representation.
+     *
+     * @return a list of {@code ProductResponse} objects, each representing a product
+     * with its details such as ID, name, cost, amount, and description.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> readAll() {
+        final List<Product> products = productRepository.findAll();
+        return productMapper.toResponseList(products);
     }
 }

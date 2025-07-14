@@ -1,7 +1,9 @@
 package com.flapkap.vendingmachine.service;
 
 import com.flapkap.vendingmachine.dto.ProductDTO;
+import com.flapkap.vendingmachine.web.response.ProductResponse;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -22,4 +24,12 @@ public interface ProductService {
      * @return the unique identifier (UUID) of the newly created product.
      */
     UUID create(ProductDTO productDTO);
+
+    /**
+     * Retrieves a list of all products and maps them to their response representation.
+     *
+     * @return a list of {@code ProductResponse} objects, each representing a product
+     * with its details such as ID, name, cost, amount, and description.
+     */
+    List<ProductResponse> readAll();
 }
