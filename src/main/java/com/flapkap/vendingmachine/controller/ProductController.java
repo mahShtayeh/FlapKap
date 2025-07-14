@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+import static com.flapkap.vendingmachine.config.OpenApiConfig.JWT_SECURITY;
+
 /**
  * The ProductController class provides RESTful API endpoints for managing product-related operations.
  * It is responsible for handling incoming API requests, delegating business logic to the ProductService,
@@ -57,7 +59,7 @@ public class ProductController {
      * @return a RestResponse containing a ProductCreationResponse with the ID of the created product
      */
     @Operation(summary = "Create a new product")
-    @SecurityRequirement(name = "bearerAuth")
+    @SecurityRequirement(name = JWT_SECURITY)
     @ApiResponse(responseCode = "201", description = "Product created successfully")
     @PreAuthorize("hasRole('SELLER')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -76,7 +78,7 @@ public class ProductController {
      * @return a RestResponse containing a list of ProductDTO objects representing all products.
      */
     @Operation(summary = "Read all products")
-    @SecurityRequirement(name = "bearerAuth")
+    @SecurityRequirement(name = JWT_SECURITY)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponse<List<ProductResponse>> readAll() {
         return RestResponse.ok(productService.readAll());
@@ -91,10 +93,9 @@ public class ProductController {
      * @return a RestResponse containing the updated ProductResponse object
      */
     @Operation(summary = "Update fields of a product")
-    @SecurityRequirement(name = "bearerAuth")
+    @SecurityRequirement(name = JWT_SECURITY)
     @PreAuthorize("hasRole('SELLER')")
-    @PatchMapping(
-            path = "{productId}",
+    @PatchMapping(path = "{productId}",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public RestResponse<ProductResponse> update(@PathVariable final UUID productId,
@@ -107,5 +108,20 @@ public class ProductController {
         return RestResponse.ok(productResponse);
     }
 
-    // todo: Delete Product - SELLER
+    /**
+     * Deletes a product based on the provided product ID.
+     *
+     * @param productId the unique identifier of the product to be deleted
+     * @return a RestResponse with a void payload indicating that the deletion was successful
+     */
+    @Operation(summary = "Delete a product")
+    @ApiResponse(responseCode = "204", description = "Product deleted successfully")
+    @SecurityRequirement(name = JWT_SECURITY)
+    @DeleteMapping(path = "{productId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public RestResponse<Void> delete(@PathVariable final UUID productId,
+                                     @AuthenticationPrincipal final UserPrincipal seller) {
+        productService.delete(productId, seller.getId());
+        return RestResponse.ok(null);
+    }
 }

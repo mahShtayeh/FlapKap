@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
@@ -32,17 +33,25 @@ import lombok.NoArgsConstructor;
                 )
         ),
         security = {
-                @SecurityRequirement(name = "bearerAuth")
+                @SecurityRequirement(name = OpenApiConfig.JWT_SECURITY)
         }
 )
 @SecurityScheme(
-        name = "bearerAuth",
+        name = OpenApiConfig.JWT_SECURITY,
         type = SecuritySchemeType.HTTP,
         bearerFormat = "JWT",
         scheme = "bearer",
         description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
         in = SecuritySchemeIn.HEADER
 )
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OpenApiConfig {
+    /**
+     * Represents the name of the security scheme used for JWT authentication.
+     * This constant is used for referencing and configuring the security requirements
+     * in the OpenAPI documentation.
+     * The value "bearerAuth" corresponds to the Bearer authentication scheme,
+     * typically using a JWT token included in the request's Authorization header.
+     */
+    public static final String JWT_SECURITY = "bearerAuth";
 }

@@ -304,4 +304,20 @@ class ProductServiceTest {
         assertThat(updateResponse.amount()).isEqualTo(UPDATE_PRODUCT_AMOUNT);
         verify(productMapper).toResponse(argThat(product -> product.getAmount().equals(UPDATE_PRODUCT_AMOUNT)));
     }
+
+    /**
+     * Tests the functionality of deleting a product in the ProductService.
+     * This test verifies that:
+     * - The product is retrieved from the repository using its unique identifier.
+     * - The retrieved product is associated with the correct seller.
+     * - The `delete` method of the `productRepository` is invoked to delete the product.
+     */
+    @Test
+    void deleteProduct_shouldDeleteProduct() {
+        when(productRepository.findById(PRODUCT_ID)).thenReturn(Optional.of(PRODUCT));
+
+        productService.delete(PRODUCT_ID, SELLER_ID);
+
+        verify(productRepository).delete(PRODUCT);
+    }
 }

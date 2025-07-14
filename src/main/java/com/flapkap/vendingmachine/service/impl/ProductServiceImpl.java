@@ -108,4 +108,24 @@ public class ProductServiceImpl implements ProductService {
         productMapper.updateEntity(productDTO, product);
         return productMapper.toResponse(product);
     }
+
+    /**
+     * Deletes a product identified by its unique identifier and associated with a specific seller.
+     *
+     * @param productId the unique identifier of the product to be deleted.
+     * @param sellerId  the unique identifier of the seller associated with the product.
+     * @throws ProductNotFoundException if the product with the given {@code productId} does not exist.
+     */
+    @Override
+    public void delete(final UUID productId, final UUID sellerId) {
+        final Product product = productRepository.findById(productId)
+                .orElseThrow(() -> ProductNotFoundException.builder()
+                        .productId(productId)
+                        .message("error.product.notFound")
+                        .build());
+
+        AssertUtil.isTrue(sellerId.equals(product.getSeller().getId()),
+                () -> new AccessDeniedException("ACCESS_DENIED"));
+        productRepository.delete(product);
+    }
 }

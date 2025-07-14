@@ -125,6 +125,8 @@ class ProductControllerTest {
      */
     private static final String JWT_MOCK = "Bearer mock.jwt.token";
 
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+
     /**
      * A static and final instance of {@link ProductDTO}, specifically used for representing
      * the updated state of a product with modified attributes during testing scenarios.
@@ -184,7 +186,7 @@ class ProductControllerTest {
 
         mockMvc.perform(post("/api/v1/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", JWT_MOCK)
+                        .header(AUTHORIZATION_HEADER, JWT_MOCK)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpectAll(
                         status().isCreated(),
@@ -206,7 +208,7 @@ class ProductControllerTest {
 
         mockMvc.perform(get("/api/v1/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", JWT_MOCK))
+                        .header(AUTHORIZATION_HEADER, JWT_MOCK))
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.payload").isArray(),
@@ -232,13 +234,31 @@ class ProductControllerTest {
 
         mockMvc.perform(patch("/api/v1/products/" + PRODUCT_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", JWT_MOCK)
+                        .header(AUTHORIZATION_HEADER, JWT_MOCK)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.payload").isNotEmpty(),
                         jsonPath("$.payload.id").value(PRODUCT_ID.toString()),
                         jsonPath("$.payload.amount").value(UPDATE_PRODUCT_AMOUNT.toString()),
+                        jsonPath("$.errors").isEmpty());
+    }
+
+    /**
+     * Tests the successful deletion of a product using the DELETE /api/products/{id} endpoint.
+     * Verifies that the API responds with an HTTP 204 No Content status code when a valid product ID is provided.
+     * Ensures that the response payload and errors are both empty and that the proper authorization header is included.
+     */
+    @Test
+    @SneakyThrows
+    @DisplayName("DELETE /api/products/{id} - Success")
+    void deleteProduct_withValidId_shouldReturn204() {
+        mockMvc.perform(delete("/api/v1/products/" + PRODUCT_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION_HEADER, JWT_MOCK))
+                .andExpectAll(
+                        status().isNoContent(),
+                        jsonPath("$.payload").isEmpty(),
                         jsonPath("$.errors").isEmpty());
     }
 }

@@ -47,4 +47,13 @@ public interface ProductService {
      * @throws AcceptPendingException   if the {@code sellerId} does not match the owner of the product.
      */
     ProductResponse update(UUID productId, ProductDTO productDTO, UUID sellerId);
+
+    /**
+     * Deletes a product from the system by its unique identifier and verifies the operation
+     * by requiring the owner's ID for authorization.
+     *
+     * @param productId the unique identifier of the product to be deleted
+     * @param id        the unique identifier of the user or seller performing the deletion
+     */
+    void delete(UUID productId, UUID id);
 }
