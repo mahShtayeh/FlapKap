@@ -1,31 +1,29 @@
 package com.flapkap.vendingmachine.web.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Builder;
 
 /**
- * A request object used to encapsulate data required for creating a new product.
- * It contains details such as the product's name, cost, amount, and an optional description.
+ * Represents a request object for updating a product.
+ * This class encapsulates the necessary information for updating
+ * the details of an existing product, including the name, cost, amount,
+ * and an optional description. It is compatible with OpenAPI for API
+ * documentation and includes validation annotations for input constraints.
  *
  * @author Mahmoud Shtayeh
  */
-@Schema(description = "Creat product request")
+@Schema(description = "Product update request")
 @Builder
-public record ProductCreationRequest(
+public record ProductUpdateRequest(
         @Schema(description = "Product name", example = "Laptop")
-        @NotEmpty(message = "error.product.missingOrEmptyName")
         String name,
 
         @Schema(description = "Product cost", example = "1500.0")
-        @NotNull(message = "error.product.missingCost")
         @PositiveOrZero(message = "error.product.invalidCost")
         Double cost,
 
         @Schema(description = "Product amount", example = "200")
-        @NotNull(message = "error.product.missingAmount")
         @PositiveOrZero(message = "error.product.invalidAmount")
         Integer amount,
 

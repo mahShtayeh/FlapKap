@@ -1,14 +1,17 @@
 package com.flapkap.vendingmachine.service.impl;
 
 import com.flapkap.vendingmachine.dto.ProductDTO;
+import com.flapkap.vendingmachine.exception.ProductNotFoundException;
 import com.flapkap.vendingmachine.mapper.ProductMapper;
 import com.flapkap.vendingmachine.model.Product;
 import com.flapkap.vendingmachine.model.User;
 import com.flapkap.vendingmachine.repository.ProductRepository;
 import com.flapkap.vendingmachine.service.ProductService;
 import com.flapkap.vendingmachine.service.UserService;
+import com.flapkap.vendingmachine.util.AssertUtil;
 import com.flapkap.vendingmachine.web.response.ProductResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,5 +82,30 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductResponse> readAll() {
         final List<Product> products = productRepository.findAll();
         return productMapper.toResponseList(products);
+    }
+
+    /**
+     * Updates an existing product entity with the provided data transfer object and ensures
+     * the updated product belongs to the specified seller.
+     *
+     * @param productId  the unique identifier of the product to be updated.
+     * @param productDTO the data transfer object containing the updated product details.
+     * @param sellerId   the unique identifier of the seller to verify ownership of the product.
+     * @return the updated product details as a {@code ProductResponse} object.
+     * @throws ProductNotFoundException if the product with the given {@code productId} is not found.
+     * @throws AccessDeniedException    if the {@code sellerId} does not match the owner of the product.
+     */
+    @Override
+    public ProductResponse update(final UUID productId, final ProductDTO productDTO, final UUID sellerId) {
+        final Product product = productRepository.findById(productId)
+                .orElseThrow(() -> ProductNotFoundException.builder()
+                        .productId(productId)
+                        .message("error.product.notFound")
+                        .build());
+
+        AssertUtil.isTrue(sellerId.equals(product.getSeller().getId()),
+                () -> new AccessDeniedException("ACCESS_DENIED"));
+        productMapper.updateEntity(productDTO, product);
+        return productMapper.toResponse(product);
     }
 }

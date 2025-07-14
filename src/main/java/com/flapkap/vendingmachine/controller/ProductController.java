@@ -5,6 +5,7 @@ import com.flapkap.vendingmachine.security.UserPrincipal;
 import com.flapkap.vendingmachine.service.ProductService;
 import com.flapkap.vendingmachine.web.RestResponse;
 import com.flapkap.vendingmachine.web.request.ProductCreationRequest;
+import com.flapkap.vendingmachine.web.request.ProductUpdateRequest;
 import com.flapkap.vendingmachine.web.response.ProductCreationResponse;
 import com.flapkap.vendingmachine.web.response.ProductResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,6 +82,30 @@ public class ProductController {
         return RestResponse.ok(productService.readAll());
     }
 
-    // todo: Update Product - SELLER
+    /**
+     * Updates specific fields of an existing product.
+     *
+     * @param productId the unique identifier of the product to be updated
+     * @param request   the ProductUpdateRequest containing the new values for the fields to be updated
+     * @param seller    the authenticated seller performing the update action
+     * @return a RestResponse containing the updated ProductResponse object
+     */
+    @Operation(summary = "Update fields of a product")
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('SELLER')")
+    @PatchMapping(
+            path = "{productId}",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponse<ProductResponse> update(@PathVariable final UUID productId,
+                                                @Valid @RequestBody final ProductUpdateRequest request,
+                                                @AuthenticationPrincipal final UserPrincipal seller) {
+        final ProductResponse productResponse = productService.update(
+                productId,
+                productMapper.toDTO(request),
+                seller.getId());
+        return RestResponse.ok(productResponse);
+    }
+
     // todo: Delete Product - SELLER
 }

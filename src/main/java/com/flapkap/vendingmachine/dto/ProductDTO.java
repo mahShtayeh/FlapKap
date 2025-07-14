@@ -22,7 +22,7 @@ import java.util.UUID;
 @Builder
 public record ProductDTO(
         String name,
-        double cost,
+        Double cost,
         Integer amount,
         String description,
         UUID sellerId

@@ -17,10 +17,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for the {@link ProductServiceImpl} class.
@@ -126,6 +127,14 @@ class ProductServiceTest {
     private static final Integer PRODUCT_AMOUNT = 200;
 
     /**
+     * A constant representing the updated amount value for a product during testing scenarios.
+     * This value is used to simulate changes to the product's amount in the context of unit tests,
+     * particularly within the `updateProduct_withValidDetails_shouldReturnUpdatedProduct` test method
+     * in the `ProductServiceTest` class.
+     */
+    private static final Integer UPDATE_PRODUCT_AMOUNT = 300;
+
+    /**
      * Represents the cost of a product in the context of product-related tests.
      * This is a constant value used as a reference for testing scenarios.
      */
@@ -148,6 +157,14 @@ class ProductServiceTest {
             .cost(PRODUCT_COST)
             .description(PRODUCT_DESCRIPTION)
             .sellerId(SELLER_ID)
+            .build();
+
+    /**
+     * A static and final instance of {@code ProductDTO} pre-configured with test data.
+     * This object is mainly used for validating and testing purposes in the {@code ProductServiceTest} class.
+     */
+    private static final ProductDTO UPDATE_PRODUCT_DTO = ProductDTO.builder()
+            .amount(UPDATE_PRODUCT_AMOUNT)
             .build();
 
     /**
@@ -210,6 +227,21 @@ class ProductServiceTest {
             .build();
 
     /**
+     * A static, pre-constructed instance of {@link ProductResponse} used to represent
+     * the state of a product after a successful update operation.
+     * This constant is commonly used in test methods to verify the correctness of
+     * the product update functionality, ensuring that the updated product details match
+     * the expected values.
+     */
+    private static final ProductResponse UPDATE_PRODUCT_RESPONSE = ProductResponse.builder()
+            .id(PRODUCT_ID)
+            .name(PRODUCT_NAME)
+            .amount(UPDATE_PRODUCT_AMOUNT)
+            .cost(PRODUCT_COST)
+            .description(PRODUCT_DESCRIPTION)
+            .build();
+
+    /**
      * Tests the successful creation of a product with valid details.
      * This test verifies that when a valid `ProductDTO` is provided, the `create` method
      * in the `ProductService` correctly maps it to a `Product` entity, associates it with
@@ -244,5 +276,32 @@ class ProductServiceTest {
         assertThat(productResponseList).isNotNull();
         assertThat(productResponseList.size()).isEqualTo(1);
         assertThat(productResponseList).isEqualTo(List.of(PRODUCT_RESPONSE));
+    }
+
+    /**
+     * Tests the functionality of updating an existing product with valid details in the `ProductService`.
+     * This test ensures that:
+     * - The product is found in the repository by its ID.
+     * - The `ProductMapper.updateEntity` method is invoked to update the product entity with the new details.
+     * - The updated product is correctly mapped to a `ProductResponse` object using the `ProductMapper.toResponse` method.
+     * - The `ProductService.update` method returns a response that matches the expected updated product details.
+     */
+    @Test
+    void updateProduct_withValidDetails_shouldReturnUpdatedProduct() {
+        when(productRepository.findById(PRODUCT_ID)).thenReturn(Optional.of(PRODUCT));
+        when(productMapper.toResponse(PRODUCT)).thenReturn(UPDATE_PRODUCT_RESPONSE);
+        doAnswer(invocation -> {
+            final ProductDTO source = invocation.getArgument(0);
+            final Product target = invocation.getArgument(1);
+            target.setAmount(source.amount());
+            return null;
+        }).when(productMapper).updateEntity(UPDATE_PRODUCT_DTO, PRODUCT);
+
+        final ProductResponse updateResponse = productService.update(PRODUCT_ID, UPDATE_PRODUCT_DTO, SELLER_ID);
+
+        assertThat(updateResponse).isNotNull();
+        assertThat(updateResponse).isEqualTo(UPDATE_PRODUCT_RESPONSE);
+        assertThat(updateResponse.amount()).isEqualTo(UPDATE_PRODUCT_AMOUNT);
+        verify(productMapper).toResponse(argThat(product -> product.getAmount().equals(UPDATE_PRODUCT_AMOUNT)));
     }
 }

@@ -1,10 +1,12 @@
 package com.flapkap.vendingmachine.controller;
 
 import com.flapkap.vendingmachine.config.TestSecurityConfig;
+import com.flapkap.vendingmachine.dto.ProductDTO;
 import com.flapkap.vendingmachine.mapper.ProductMapper;
 import com.flapkap.vendingmachine.service.ProductService;
 import com.flapkap.vendingmachine.service.UserService;
 import com.flapkap.vendingmachine.web.request.ProductCreationRequest;
+import com.flapkap.vendingmachine.web.request.ProductUpdateRequest;
 import com.flapkap.vendingmachine.web.response.ProductResponse;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -98,6 +100,12 @@ class ProductControllerTest {
     private static final Integer PRODUCT_AMOUNT = 200;
 
     /**
+     * The constant representing the updated amount of a product used in test cases
+     * to simulate scenarios of modifying product quantities.
+     */
+    private static final Integer UPDATE_PRODUCT_AMOUNT = 300;
+
+    /**
      * Represents the cost of a product in the context of product-related tests.
      * This is a constant value used as a reference for testing scenarios.
      */
@@ -118,6 +126,17 @@ class ProductControllerTest {
     private static final String JWT_MOCK = "Bearer mock.jwt.token";
 
     /**
+     * A static and final instance of {@link ProductDTO}, specifically used for representing
+     * the updated state of a product with modified attributes during testing scenarios.
+     * This instance is built using the {@code ProductDTO} builder, where the amount field
+     * is set to {@code UPDATE_PRODUCT_AMOUNT}, providing a consistent and reusable object
+     * for verifying product update operations in test cases.
+     */
+    private static final ProductDTO UPDATE_PRODUCT_DTO = ProductDTO.builder()
+            .amount(UPDATE_PRODUCT_AMOUNT)
+            .build();
+
+    /**
      * A constant instance of {@link ProductResponse} representing a predefined product response.
      * This instance is initialized with statically defined values for product ID, name, amount, cost,
      * and description. It is commonly used in tests to simulate a product response without relying
@@ -127,6 +146,20 @@ class ProductControllerTest {
             .id(PRODUCT_ID)
             .name(PRODUCT_NAME)
             .amount(PRODUCT_AMOUNT)
+            .cost(PRODUCT_COST)
+            .description(PRODUCT_DESCRIPTION)
+            .build();
+
+    /**
+     * A static final instance of the {@code ProductResponse} class representing
+     * the response for an updated product. This variable is initialized using
+     * the builder pattern, providing predefined values for product attributes such as
+     * ID, name, amount, cost, and description.
+     */
+    private static final ProductResponse UPDATE_PRODUCT_RESPONSE = ProductResponse.builder()
+            .id(PRODUCT_ID)
+            .name(PRODUCT_NAME)
+            .amount(UPDATE_PRODUCT_AMOUNT)
             .cost(PRODUCT_COST)
             .description(PRODUCT_DESCRIPTION)
             .build();
@@ -178,6 +211,34 @@ class ProductControllerTest {
                         status().isOk(),
                         jsonPath("$.payload").isArray(),
                         jsonPath("$.payload.length()").value(1),
+                        jsonPath("$.errors").isEmpty());
+    }
+
+    /**
+     * Tests the successful update of a product using the PATCH /api/products/{id} endpoint.
+     * This test verifies that a valid product update request returns an HTTP 200 status code
+     * with the correct response body. It mocks the behavior of the `productService.update` method
+     * to simulate a successful update operation.
+     */
+    @Test
+    @SneakyThrows
+    @DisplayName("PATCH /api/products/{id} - Success")
+    void updateProduct_withValidDetails_shouldReturn200() {
+        final ProductUpdateRequest request = ProductUpdateRequest.builder()
+                .amount(UPDATE_PRODUCT_AMOUNT)
+                .build();
+
+        given(productService.update(eq(PRODUCT_ID), any(), any())).willReturn(UPDATE_PRODUCT_RESPONSE);
+
+        mockMvc.perform(patch("/api/v1/products/" + PRODUCT_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", JWT_MOCK)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.payload").isNotEmpty(),
+                        jsonPath("$.payload.id").value(PRODUCT_ID.toString()),
+                        jsonPath("$.payload.amount").value(UPDATE_PRODUCT_AMOUNT.toString()),
                         jsonPath("$.errors").isEmpty());
     }
 }

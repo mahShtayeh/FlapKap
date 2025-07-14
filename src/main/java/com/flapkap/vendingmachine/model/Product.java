@@ -33,12 +33,12 @@ public class Product extends Auditable {
     /**
      * Represents the cost of the product.
      */
-    private double cost;
+    private Double cost;
 
     /**
      * Represents the quantity of the product available in stock.
      */
-    private int amount;
+    private Integer amount;
 
     /**
      * A brief description or details about the product.

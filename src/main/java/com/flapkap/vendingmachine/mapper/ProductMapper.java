@@ -4,9 +4,9 @@ import com.flapkap.vendingmachine.dto.ProductDTO;
 import com.flapkap.vendingmachine.model.Product;
 import com.flapkap.vendingmachine.model.User;
 import com.flapkap.vendingmachine.web.request.ProductCreationRequest;
+import com.flapkap.vendingmachine.web.request.ProductUpdateRequest;
 import com.flapkap.vendingmachine.web.response.ProductResponse;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -55,4 +55,38 @@ public interface ProductMapper {
      * @return a list of {@link ProductResponse} objects representing the converted product details.
      */
     List<ProductResponse> toResponseList(List<Product> products);
+
+    /**
+     * Converts a {@link Product} entity into a {@link ProductResponse} object.
+     * This method is used to map product entity data into a format suitable for API responses.
+     *
+     * @param product the {@link Product} entity containing product details such as id, name, cost,
+     *                amount, and description.
+     * @return a {@link ProductResponse} object representing the converted product details.
+     */
+    ProductResponse toResponse(Product product);
+
+    /**
+     * Converts a {@link ProductUpdateRequest} object to a {@link ProductDTO}.
+     * This method maps the product update details provided in the request into
+     * a {@code ProductDTO} for further usage or processing in the application.
+     *
+     * @param request the {@link ProductUpdateRequest} containing product details
+     *                to be updated, such as name, cost, amount, and description.
+     * @return a {@link ProductDTO} object representing the mapped product details.
+     */
+    ProductDTO toDTO(ProductUpdateRequest request);
+
+    /**
+     * Updates an existing {@link Product} entity with the details provided in the {@link ProductDTO}.
+     * This method maps fields from the {@code productDTO} to the {@code product} entity, ensuring
+     * that the entity is updated without creating a new instance.
+     *
+     * @param productDTO the {@link ProductDTO} containing the updated product details such as
+     *                   name, cost, amount, description, and seller ID.
+     * @param product    the {@link Product} entity that will be updated with the details from the
+     *                   provided {@code productDTO}.
+     */
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(ProductDTO productDTO, @MappingTarget Product product);
 }

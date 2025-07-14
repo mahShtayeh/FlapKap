@@ -1,8 +1,10 @@
 package com.flapkap.vendingmachine.service;
 
 import com.flapkap.vendingmachine.dto.ProductDTO;
+import com.flapkap.vendingmachine.exception.ProductNotFoundException;
 import com.flapkap.vendingmachine.web.response.ProductResponse;
 
+import java.nio.channels.AcceptPendingException;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,4 +34,17 @@ public interface ProductService {
      * with its details such as ID, name, cost, amount, and description.
      */
     List<ProductResponse> readAll();
+
+    /**
+     * Updates an existing product entity with the provided data transfer object and ensures
+     * the updated product belongs to the specified seller.
+     *
+     * @param productId  the unique identifier of the product to be updated.
+     * @param productDTO the data transfer object containing the updated product details.
+     * @param sellerId   the unique identifier of the seller to verify ownership of the product.
+     * @return the updated product details as a {@code ProductResponse} object.
+     * @throws ProductNotFoundException if the product with the given {@code productId} is not found.
+     * @throws AcceptPendingException   if the {@code sellerId} does not match the owner of the product.
+     */
+    ProductResponse update(UUID productId, ProductDTO productDTO, UUID sellerId);
 }
