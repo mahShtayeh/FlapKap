@@ -1,14 +1,23 @@
 package com.flapkap.vendingmachine.security;
 
+import com.flapkap.vendingmachine.exception.JwtAuthenticationException;
+import com.flapkap.vendingmachine.service.impl.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * A utility class responsible for handling JSON Web Token (JWT) generation and validation.
@@ -17,6 +26,7 @@ import java.util.Date;
  *
  * @author Mahmoud Shtayeh
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
@@ -34,6 +44,14 @@ public class JwtTokenProvider {
      * signing the token and the expiration duration for tokens.
      */
     private final JwtProperties jwtProperties;
+
+    /**
+     * A final field representing an instance of {@link UserDetailsServiceImpl}.
+     * This service is responsible for handling user-authentication-related
+     * operations by loading user-specific data, such as user details and roles,
+     * during the authentication process.
+     */
+    private final UserDetailsServiceImpl userDetailsService;
 
     /**
      * Generates a JSON Web Token (JWT) for the provided user principal.
@@ -73,6 +91,7 @@ public class JwtTokenProvider {
                 .verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token);
+
         return true;
     }
 
@@ -89,4 +108,41 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    /**
+     * Retrieves the authentication details by parsing and verifying the provided JWT token.
+     * This method extracts the claims from the token, identifies the user's principal and roles,
+     * and constructs an authentication object based on the user's details.
+     *
+     * @param token the JWT token to be parsed and verified. It must not be null and should be valid.
+     * @return an {@link Authentication} object containing the user's principal and granted authorities.
+     * @throws JwtAuthenticationException if the token is invalid, expired, or fails any verification checks.
+     * @throws IllegalArgumentException   if the token is malformed or null.
+     */
+    public Authentication getAuthentication(final String token) {
+        try {
+            final Claims claims = Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+            final UUID userId = UUID.fromString(claims.getSubject());
+            final UserPrincipal userPrincipal = userDetailsService.loadUserById(userId);
+            final Collection<? extends GrantedAuthority> authorities =
+                    ((List<?>) claims.get(ROLES_CLAIM_KEY, List.class))
+                            .stream()
+                            .map(authority -> new SimpleGrantedAuthority((String) authority))
+                            .toList();
+
+            return new UsernamePasswordAuthenticationToken(
+                    userPrincipal,
+                    null,
+                    authorities
+            );
+        } catch (JwtException | IllegalArgumentException ex) {
+            throw JwtAuthenticationException.builder()
+                    .message("error.jwt.authenticationFailed")
+                    .build();
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.flapkap.vendingmachine.service;
 
 import com.flapkap.vendingmachine.dto.UserDTO;
+import com.flapkap.vendingmachine.exception.UserNotFoundException;
 import com.flapkap.vendingmachine.model.User;
 
 import java.util.UUID;
@@ -32,4 +33,13 @@ public interface UserService {
      * @return a string representing the generated access token for the authenticated user.
      */
     String login(UserDTO userDTO);
+
+    /**
+     * Retrieves a user by their unique identifier.
+     *
+     * @param userId the unique identifier of the user to be retrieved
+     * @return the {@link User} entity corresponding to the given unique identifier
+     * @throws UserNotFoundException if no user with the specified unique identifier is found
+     */
+    User read(UUID userId);
 }

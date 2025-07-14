@@ -216,14 +216,14 @@ class UserServiceTest {
     /**
      * A static final instance of the {@link UserDTO} class that represents a pre-configured seller user.
      * This instance is created using the builder pattern to define the seller's username, hashed password,
-     * deposit balance, and role as a buyer. It is intended to be used in the context of tests within
+     * deposit balance, and role as a seller. It is intended to be used in the context of tests within
      * the UserServiceTest class.
      */
     private static final UserDTO SELLER_DTO = UserDTO.builder()
             .username(SELLER_USERNAME)
             .password(HASHED_PASSWORD)
             .deposit(BALANCE)
-            .role(Role.BUYER)
+            .role(Role.SELLER)
             .enabled(true)
             .build();
 
@@ -235,7 +235,7 @@ class UserServiceTest {
      * involving seller user scenarios in unit tests.
      */
     private static final User TRANSIENT_SELLER = User.builder()
-            .username(BUYER_USERNAME)
+            .username(SELLER_USERNAME)
             .password(ENCRYPTED_PASSWORD)
             .deposit(BALANCE)
             .role(Role.SELLER)
@@ -249,10 +249,10 @@ class UserServiceTest {
      */
     private static final User SELLER = User.builder()
             .id(SELLER_ID)
-            .username(BUYER_USERNAME)
+            .username(SELLER_USERNAME)
             .password(ENCRYPTED_PASSWORD)
             .deposit(BALANCE)
-            .role(Role.BUYER)
+            .role(Role.SELLER)
             .enabled(true)
             .build();
 
@@ -283,7 +283,7 @@ class UserServiceTest {
          * when registering a seller with valid details.
          */
         @Test
-        void registerSeller_withValidDetails_shouldReturnsUserId() {
+        void registerSeller_withValidDetails_shouldReturnUserId() {
             when(passwordEncoder.encode(HASHED_PASSWORD)).thenReturn(ENCRYPTED_PASSWORD);
             when(userMapper.toEntity(SELLER_DTO, ENCRYPTED_PASSWORD)).thenReturn(TRANSIENT_SELLER);
             when(userRepository.save(TRANSIENT_SELLER)).thenReturn(SELLER);
@@ -302,7 +302,7 @@ class UserServiceTest {
          * and `userRepository` and verifying the expected user ID is returned.
          */
         @Test
-        void registerBuyer_withValidDetails_shouldReturnsUserId() {
+        void registerBuyer_withValidDetails_shouldReturnUserId() {
             when(passwordEncoder.encode(HASHED_PASSWORD)).thenReturn(ENCRYPTED_PASSWORD);
             when(userMapper.toEntity(BUYER_DTO, ENCRYPTED_PASSWORD)).thenReturn(TRANSIENT_BUYER);
             when(userRepository.save(TRANSIENT_BUYER)).thenReturn(BUYER);
@@ -330,14 +330,13 @@ class UserServiceTest {
          * when a buyer's correct username and password are provided.
          */
         @Test
-        void loginBuyer_withValidDetails_shouldReturnsJwtToken() {
+        void loginBuyer_withValidDetails_shouldReturnJwtToken() {
             when(authenticationManager.authenticate(any())).thenReturn(authentication);
             when(authentication.getPrincipal()).thenReturn(BUYER_PRINCIPAL);
             when(tokenProvider.generateToken(BUYER_PRINCIPAL)).thenReturn(JWT_TOKEN);
 
             final String jwtToken = userService.login(BUYER_DTO);
 
-            assertThat(jwtToken).isNotNull();
             assertThat(jwtToken).isEqualTo(JWT_TOKEN);
             verify(authenticationManager).authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -353,7 +352,7 @@ class UserServiceTest {
          * when a seller's correct username and password are provided.
          */
         @Test
-        void loginSeller_withValidDetails_shouldReturnsJwtToken() {
+        void loginSeller_withValidDetails_shouldReturnJwtToken() {
             when(authenticationManager.authenticate(any())).thenReturn(authentication);
             when(authentication.getPrincipal()).thenReturn(SELLER_PRINCIPAL);
             when(tokenProvider.generateToken(SELLER_PRINCIPAL)).thenReturn(JWT_TOKEN);

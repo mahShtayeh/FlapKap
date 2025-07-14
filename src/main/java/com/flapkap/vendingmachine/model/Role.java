@@ -11,5 +11,5 @@ package com.flapkap.vendingmachine.model;
  * @author Mahmoud Shtayeh
  */
 public enum Role {
-    BUYER, SELLER
+    BUYER, SELLER;
 }

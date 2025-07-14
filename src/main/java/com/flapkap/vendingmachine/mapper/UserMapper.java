@@ -10,6 +10,7 @@ import org.mapstruct.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Set;
 
@@ -70,6 +71,7 @@ public interface UserMapper {
      * @return a {@link SimpleGrantedAuthority} object with the role's name as its authority.
      */
     default Set<SimpleGrantedAuthority> toAuthorities(final Role role) {
-        return Collections.singleton(new SimpleGrantedAuthority(role.name()));
+        return Collections.singleton(new SimpleGrantedAuthority(MessageFormat.format("{0}{1}",
+                UserPrincipal.ROLE_PREFIX, role.name())));
     }
 }

@@ -76,7 +76,7 @@ public class AuthController {
      */
     @SecurityRequirements()
     @Operation(summary = "Login a user")
-    @PostMapping("/logins")
+    @PostMapping("/login")
     public RestResponse<LoginResponse> login(@Valid @RequestBody final LoginRequest request) {
         final String token = userService.login(userMapper.toDTO(request));
         return RestResponse.ok(LoginResponse.builder()

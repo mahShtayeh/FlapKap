@@ -1,6 +1,7 @@
 package com.flapkap.vendingmachine.service.impl;
 
 import com.flapkap.vendingmachine.dto.UserDTO;
+import com.flapkap.vendingmachine.exception.UserNotFoundException;
 import com.flapkap.vendingmachine.mapper.UserMapper;
 import com.flapkap.vendingmachine.repository.UserRepository;
 import com.flapkap.vendingmachine.security.JwtTokenProvider;
@@ -96,5 +97,21 @@ public class UserServiceImpl implements UserService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return tokenProvider.generateToken((UserPrincipal) authentication.getPrincipal());
+    }
+
+    /**
+     * Retrieves a user by their unique identifier.
+     *
+     * @param userId the unique identifier of the user to be retrieved
+     * @return the {@link User} entity corresponding to the given unique identifier
+     * @throws UserNotFoundException if no user with the specified unique identifier is found
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public User read(final UUID userId) {
+        return userRepository.findById(userId).orElseThrow(() -> UserNotFoundException.builder()
+                .userId(userId)
+                .message("error.user.notFound")
+                .build());
     }
 }

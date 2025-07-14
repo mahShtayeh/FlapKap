@@ -5,6 +5,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
+/**
+ * Represents a login request used to authenticate a user.
+ * It captures the user's login credentials, including the username (email) and password.
+ * This class is annotated to support OpenAPI documentation and input validation constraints.
+ *
+ * @author Mahmoud Shtayeh
+ */
 @Schema(description = "Login request")
 @Builder
 public record LoginRequest(

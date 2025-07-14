@@ -25,6 +25,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserPrincipal implements UserDetails {
     /**
+     * A constant representing the default prefix for roles in the Spring Security
+     * framework. This prefix is commonly used to standardize role names
+     * and distinguish them from other authorities.
+     */
+    public static final String ROLE_PREFIX = "ROLE_";
+
+    /**
      * A constant used to define the serial version unique identifier for the {@code UserPrincipal} class.
      * This identifier is used during the deserialization process to verify that the sender and receiver
      * of a serialized object maintain compatibility with respect to the object's class.

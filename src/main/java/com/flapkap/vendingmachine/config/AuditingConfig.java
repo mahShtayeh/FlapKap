@@ -35,24 +35,26 @@ public class AuditingConfig {
     private static final String ANONYMOUS_USERNAME = "ANONYMOUS";
 
     /**
-     * Provides an implementation of {@link AuditorAware} to retrieve the current auditor's
-     * username for JPA auditing purposes. The auditor is determined based on the current
-     * authentication context.
+     * Provides an implementation of {@link AuditorAware} for determining the auditor's username
+     * in JPA auditing. The method retrieves the username based on the current security context.
+     * If no authenticated user is present, it returns a predefined system or anonymous username.
      *
-     * @return an {@link AuditorAware} instance that supplies the current auditor's username
-     * as an Optional.
+     * @return an {@link AuditorAware} instance that resolves the current auditor's username
+     * based on authentication state or predefined defaults.
      */
     @Bean
     public AuditorAware<String> auditorProvider() {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return () -> {
+            final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        final String username = switch(authentication) {
-            case null -> SYSTEM_USERNAME;
-            case Authentication auth when !auth.isAuthenticated() -> SYSTEM_USERNAME;
-            case Authentication auth when auth.getPrincipal() instanceof UserPrincipal user -> user.getUsername();
-            default -> ANONYMOUS_USERNAME;
+            String username = ANONYMOUS_USERNAME;
+            if (authentication == null || !authentication.isAuthenticated()) {
+                username = SYSTEM_USERNAME;
+            } else if (authentication.getPrincipal() instanceof UserPrincipal userPrincipal) {
+                username = userPrincipal.getUsername();
+            }
+
+            return Optional.of(username);
         };
-
-        return () -> Optional.of(username);
     }
 }

@@ -20,7 +20,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -43,8 +42,10 @@ class AuthControllerTest {
     private int port;
 
     /**
-     * A final instance of {@link RestTemplate} used for sending HTTP requests during
-     * integration tests for the AccountController.
+     * The TestRestTemplate instance used for executing test HTTP requests to the application.
+     * This field is automatically injected by Spring's dependency injection mechanism
+     * and is primarily used in testing controllers to simulate client HTTP requests
+     * and validate responses.
      */
     @Autowired
     private TestRestTemplate restTemplate;
@@ -68,7 +69,7 @@ class AuthControllerTest {
     /**
      * Endpoint URL used for user login in the authentication process.
      */
-    private static final String LOGIN_URL = "/api/v1/users/logins";
+    private static final String LOGIN_URL = "/api/v1/users/login";
 
     /**
      * A constant representing a predefined email address primarily used for testing
