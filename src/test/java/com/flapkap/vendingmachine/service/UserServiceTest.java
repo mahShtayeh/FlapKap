@@ -21,7 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -129,12 +128,10 @@ class UserServiceTest {
     private static final String SELLER_USERNAME = "alen.martin@flapkap.com";
 
     /**
-     * Represents a static initial test balance value for use in test cases.
-     * This balance is used to initialize or validate functionality related
-     * to monetary computations or operations involving user deposits within
-     * the system.
+     * Represents the initial balance value used for testing purposes in the UserServiceTest class.
+     * This constant value is immutable and set to 1000.
      */
-    private static final BigDecimal BALANCE = BigDecimal.valueOf(1000.00);
+    private static final Integer BALANCE = 1000;
 
     /**
      * A constant representing a pre-defined password value, likely used for testing purposes

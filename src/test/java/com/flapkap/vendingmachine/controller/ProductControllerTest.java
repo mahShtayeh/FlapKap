@@ -1,6 +1,6 @@
 package com.flapkap.vendingmachine.controller;
 
-import com.flapkap.vendingmachine.config.TestSecurityConfig;
+import com.flapkap.vendingmachine.config.SellerSecurityConfig;
 import com.flapkap.vendingmachine.dto.ProductDTO;
 import com.flapkap.vendingmachine.mapper.ProductMapper;
 import com.flapkap.vendingmachine.service.ProductService;
@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @NoArgsConstructor
 @WebMvcTest(ProductController.class)
-@Import(TestSecurityConfig.class)
+@Import(SellerSecurityConfig.class)
 class ProductControllerTest {
     /**
      * MockMvc instance used for performing HTTP requests in test scenarios.
@@ -125,6 +125,11 @@ class ProductControllerTest {
      */
     private static final String JWT_MOCK = "Bearer mock.jwt.token";
 
+    /**
+     * Represents the HTTP header key used for including authorization credentials
+     * in API requests. This header typically contains bearer tokens or other
+     * authorization information required for accessing secured endpoints.
+     */
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
     /**
@@ -173,7 +178,7 @@ class ProductControllerTest {
      */
     @Test
     @SneakyThrows
-    @DisplayName("POST /api/products - Success")
+    @DisplayName("POST /api/v1/products - Success")
     void createProduct_withValidDetails_shouldReturn201() {
         final ProductCreationRequest request = ProductCreationRequest.builder()
                 .name(PRODUCT_NAME)
@@ -202,7 +207,7 @@ class ProductControllerTest {
      */
     @Test
     @SneakyThrows
-    @DisplayName("GET /api/products - Success")
+    @DisplayName("GET /api/v1/products - Success")
     void readAllProducts_shouldReturn200() {
         given(productService.readAll()).willReturn(List.of(PRODUCT_RESPONSE));
 
@@ -224,7 +229,7 @@ class ProductControllerTest {
      */
     @Test
     @SneakyThrows
-    @DisplayName("PATCH /api/products/{id} - Success")
+    @DisplayName("PATCH /api/v1/products/{id} - Success")
     void updateProduct_withValidDetails_shouldReturn200() {
         final ProductUpdateRequest request = ProductUpdateRequest.builder()
                 .amount(UPDATE_PRODUCT_AMOUNT)
@@ -251,7 +256,7 @@ class ProductControllerTest {
      */
     @Test
     @SneakyThrows
-    @DisplayName("DELETE /api/products/{id} - Success")
+    @DisplayName("DELETE /api/v1/products/{id} - Success")
     void deleteProduct_withValidId_shouldReturn204() {
         mockMvc.perform(delete("/api/v1/products/" + PRODUCT_ID)
                         .contentType(MediaType.APPLICATION_JSON)

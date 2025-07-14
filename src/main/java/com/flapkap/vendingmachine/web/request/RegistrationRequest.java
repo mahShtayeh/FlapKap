@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Builder;
 
-import java.math.BigDecimal;
-
 @Schema(description = "Registration request")
 @Builder
 public record RegistrationRequest(
@@ -25,7 +23,7 @@ public record RegistrationRequest(
         @Schema(description = "User deposit", example = "100.00")
         @NotNull(message = "error.user.missingDeposit")
         @PositiveOrZero(message = "error.user.invalidDeposit")
-        BigDecimal deposit,
+        Integer deposit,
 
         @Schema(description = "User role", example = "BUYER")
         @NotNull(message = "error.user.missingRole")

@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -60,14 +59,14 @@ public class User extends Auditable {
      */
     @NotNull(message = "error.user.missingDeposit")
     @PositiveOrZero(message = "error.user.invalidDeposit")
-    private BigDecimal deposit;
+    private Integer deposit;
 
     /**
      * Indicates whether the user account is enabled or active.
      * A `true` value signifies that the account is active and can interact with the system,
      * while a `false` value indicates that the account is disabled or inactive.
      */
-    private boolean enabled;
+    private Boolean enabled;
 
     /**
      * Represents the role of the user within the vending machine system.

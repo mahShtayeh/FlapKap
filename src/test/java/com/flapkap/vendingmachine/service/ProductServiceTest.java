@@ -15,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -97,12 +96,12 @@ class ProductServiceTest {
     private static final String SELLER_USERNAME = "alen.martin@flapkap.com";
 
     /**
-     * Represents a static initial test balance value for use in test cases.
-     * This balance is used to initialize or validate functionality related
-     * to monetary computations or operations involving user deposits within
-     * the system.
+     * The BALANCE constant represents the initial amount of funds or capital
+     * available in the system for testing purposes. It is used across multiple
+     * test cases to validate business logic and ensure proper handling of
+     * monetary values. The value is immutable and cannot be modified at runtime.
      */
-    private static final BigDecimal BALANCE = BigDecimal.valueOf(1000.00);
+    private static final Integer BALANCE = 1000;
 
     /**
      * A constant representing an encrypted password value used for testing or internal validation purposes.

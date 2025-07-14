@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
  */
 @TestConfiguration
 @NoArgsConstructor
-public class TestSecurityConfig {
+public class SellerSecurityConfig {
     /**
      * A constant UUID representing the unique identifier for a seller.
      * This value is used to define a static seller identity for testing purposes during
@@ -83,11 +83,6 @@ public class TestSecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        ).permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/v1/users",
                                 "/api/v1/users/login"

@@ -21,7 +21,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -88,12 +87,11 @@ class AuthControllerTest {
     private static final String SELLER_USERNAME = "alen.martin@flapkap.com";
 
     /**
-     * A constant representing a predefined balance value, primarily used
-     * within integration tests for validation or simulation purposes.
-     * This value is immutable and signifies a fixed amount to ensure consistency
-     * across tests that involve monetary computations.
+     * Represents the constant balance used for testing purposes in the {@code AuthControllerTest} class.
+     * This value is utilized as a predefined balance for users in tests to validate
+     * different functionalities of the authentication controller.
      */
-    private static final BigDecimal BALANCE = BigDecimal.valueOf(1000.00);
+    private static final Integer BALANCE = 1000;
 
     /**
      * A constant representing a pre-defined password value, likely used for testing purposes
