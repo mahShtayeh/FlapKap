@@ -117,6 +117,7 @@ public class ProductController {
     @Operation(summary = "Delete a product")
     @ApiResponse(responseCode = "204", description = "Product deleted successfully")
     @SecurityRequirement(name = JWT_SECURITY)
+    @PreAuthorize("hasRole('SELLER')")
     @DeleteMapping(path = "{productId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public RestResponse<Void> delete(@PathVariable final UUID productId,

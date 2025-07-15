@@ -35,4 +35,11 @@ public interface TransactionService {
      * @return a {@link BuyDTO} containing details of the purchased products, total cost, and any change to be returned
      */
     BuyDTO buy(List<BuyRequest> buyList, UUID buyerId);
+
+    /**
+     * Resets the deposit balance of the specified buyer to zero.
+     *
+     * @param buyerId the unique identifier of the buyer whose deposit balance will be reset
+     */
+    void reset(UUID buyerId);
 }

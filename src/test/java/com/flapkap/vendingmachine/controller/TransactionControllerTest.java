@@ -28,6 +28,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -255,5 +256,22 @@ class TransactionControllerTest {
                         jsonPath("$.payload.totalSpent").value(String.valueOf(TO_BUY_AMOUNT * PRODUCT_COST)),
                         jsonPath("$.payload.changes").isArray(),
                         jsonPath("$.payload.changes").isNotEmpty());
+    }
+
+    /**
+     * Tests the reset functionality of the transaction controller when provided
+     * with valid authentication. This test verifies the following behaviors:
+     * - A DELETE request to the `/api/v1/transactions/reset` endpoint is processed correctly.
+     * - The operation returns an HTTP 204 No Content status.
+     */
+    @Test
+    @SneakyThrows
+    @DisplayName("DELETE /api/v1/transactions/reset - Success")
+    void reset_withValidLogin_shouldReturn204() {
+        mockMvc.perform(delete("/api/v1/transactions/reset")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION_HEADER, JWT_MOCK))
+                .andExpectAll(
+                        status().isNoContent());
     }
 }

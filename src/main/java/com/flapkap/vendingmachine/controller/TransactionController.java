@@ -10,16 +10,15 @@ import com.flapkap.vendingmachine.web.request.DepositRequest;
 import com.flapkap.vendingmachine.web.response.BuyResponse;
 import com.flapkap.vendingmachine.web.response.DepositResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,11 +32,7 @@ import java.util.List;
 @Tag(name = "Transaction Management", description = "Endpoints for transaction management")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(
-        path = "/api/v1/transactions",
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        consumes = MediaType.APPLICATION_JSON_VALUE
-)
+@RequestMapping("/api/v1/transactions")
 public class TransactionController {
     /**
      * Service layer dependency responsible for handling business logic related to transactions.
@@ -65,8 +60,10 @@ public class TransactionController {
      * The payload is null in the response.
      */
     @Operation(summary = "Make a deposit")
-    @PostMapping("/deposit")
     @PreAuthorize("hasRole('BUYER')")
+    @PostMapping(path = "/deposit",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public RestResponse<DepositResponse> deposit(@Valid @RequestBody final DepositRequest request,
                                                  @AuthenticationPrincipal final UserPrincipal buyer) {
         final Integer balance = transactionService.deposit(buyer.getId(), request.coins());
@@ -86,11 +83,31 @@ public class TransactionController {
      * about the purchased products, the total spent amount, and any remaining change.
      */
     @Operation(summary = "Buy Products")
-    @PostMapping("/buy")
     @PreAuthorize("hasRole('BUYER')")
+    @PostMapping(path = "/buy",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public RestResponse<BuyResponse> buy(@Valid @RequestBody final List<BuyRequest> buyList,
                                          @AuthenticationPrincipal final UserPrincipal buyer) {
         final BuyDTO buyDTO = transactionService.buy(buyList, buyer.getId());
         return RestResponse.ok(transactionMapper.toResponse(buyDTO));
+    }
+
+    /**
+     * Resets the deposit balance of the authenticated buyer to its initial state.
+     * This operation can only be performed by users with the "BUYER" role.
+     *
+     * @param buyer The authenticated buyer information, extracted from the security context.
+     *              Includes details such as the user's unique identifier.
+     * @return A {@link RestResponse} with no payload, indicating the balance was reset successfully.
+     */
+    @Operation(summary = "Reset the deposit balance of a buyer")
+    @ApiResponse(responseCode = "204", description = "Deposit balance reset successfully")
+    @PreAuthorize("hasRole('BUYER')")
+    @DeleteMapping("/reset")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public RestResponse<Void> reset(@AuthenticationPrincipal final UserPrincipal buyer) {
+        transactionService.reset(buyer.getId());
+        return RestResponse.ok(null);
     }
 }

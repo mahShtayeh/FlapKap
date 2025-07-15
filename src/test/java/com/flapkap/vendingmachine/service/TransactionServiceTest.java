@@ -185,11 +185,12 @@ class TransactionServiceTest {
      */
     @Test
     void deposit_withValidCoins_shouldReturnUpdatedBalance() {
+        final Integer initialBalance = BUYER.getDeposit();
         when(userService.read(BUYER_ID)).thenReturn(BUYER);
 
         final Integer balance = transactionService.deposit(BUYER_ID, DEPOSIT_COINS);
 
-        assertThat(balance).isEqualTo(DEPOSIT_COINS.stream().reduce(BALANCE, Integer::sum));
+        assertThat(balance).isEqualTo(DEPOSIT_COINS.stream().reduce(initialBalance, Integer::sum));
     }
 
     /**
@@ -217,5 +218,21 @@ class TransactionServiceTest {
 
         assertThat(buyDTO.totalSpent()).isEqualTo(TO_BUY_AMOUNT * PRODUCT_COST);
         assertThat(buyDTO.changes().getFirst()).isNotNull();
+    }
+
+    /**
+     * Verifies that the reset operation correctly sets the buyer's deposit balance to zero when a valid buyer ID is provided.
+     * This test ensures:
+     * - The buyer's information is successfully retrieved using the provided buyer ID.
+     * - The reset operation updates the buyer's deposit balance to zero.
+     * - The resulting deposit value matches the expected value of zero.
+     */
+    @Test
+    void reset_withValidLogin_shouldResetBalance() {
+        when(userService.read(BUYER_ID)).thenReturn(BUYER);
+
+        transactionService.reset(BUYER_ID);
+
+        assertThat(BUYER.getDeposit()).isZero();
     }
 }

@@ -89,6 +89,17 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
+     * Resets the deposit balance of the specified buyer to zero.
+     *
+     * @param buyerId the unique identifier of the buyer whose deposit balance will be reset
+     */
+    @Override
+    public void reset(final UUID buyerId) {
+        final User buyer = userService.read(buyerId);
+        buyer.setDeposit(0);
+    }
+
+    /**
      * Executes the purchase of a specific product by a buyer. It calculates the total price
      * for the requested quantity of the product, updates the buyer's deposit balance, and
      * adds the product to the list of successfully purchased products.
