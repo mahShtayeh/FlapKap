@@ -89,4 +89,15 @@ public interface ProductMapper {
      */
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntity(ProductDTO productDTO, @MappingTarget Product product);
+
+    /**
+     * Converts a {@link Product} entity into a {@link ProductDTO}.
+     * This method maps the fields of the {@link Product} entity, such as id, name, cost,
+     * amount, description, and seller information, into a corresponding {@link ProductDTO}.
+     *
+     * @param product the {@link Product} entity containing details such as id, name,
+     *                cost, amount, description, and the associated seller.
+     * @return a {@link ProductDTO} representing the mapped product details.
+     */
+    ProductDTO toDTO(Product product);
 }

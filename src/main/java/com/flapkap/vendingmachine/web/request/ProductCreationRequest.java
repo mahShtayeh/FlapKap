@@ -22,7 +22,7 @@ public record ProductCreationRequest(
         @Schema(description = "Product cost", example = "1500.0")
         @NotNull(message = "error.product.missingCost")
         @PositiveOrZero(message = "error.product.invalidCost")
-        Double cost,
+        Integer cost,
 
         @Schema(description = "Product amount", example = "200")
         @NotNull(message = "error.product.missingAmount")

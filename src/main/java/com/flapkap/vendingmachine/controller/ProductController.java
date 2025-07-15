@@ -73,11 +73,11 @@ public class ProductController {
     }
 
     /**
-     * Retrieves a list of all products available in the system.
+     * Retrieves a list of all boughtProducts available in the system.
      *
-     * @return a RestResponse containing a list of ProductDTO objects representing all products.
+     * @return a RestResponse containing a list of ProductDTO objects representing all boughtProducts.
      */
-    @Operation(summary = "Read all products")
+    @Operation(summary = "Read all boughtProducts")
     @SecurityRequirement(name = JWT_SECURITY)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public RestResponse<List<ProductResponse>> readAll() {

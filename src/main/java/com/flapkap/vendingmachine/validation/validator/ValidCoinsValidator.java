@@ -1,6 +1,8 @@
 package com.flapkap.vendingmachine.validation.validator;
 
+import com.flapkap.vendingmachine.util.CoinUtil;
 import com.flapkap.vendingmachine.validation.annotation.ValidCoins;
+import io.jsonwebtoken.lang.Collections;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.NoArgsConstructor;
@@ -18,13 +20,11 @@ import java.util.Set;
 @NoArgsConstructor
 public class ValidCoinsValidator implements ConstraintValidator<ValidCoins, List<Integer>> {
     /**
-     * A constant set defining the allowed coin denominations for validation.
-     * This set specifies that only coins with values of 5, 10, 20, 50, and 100
-     * cents are considered valid. Used by the {@link ValidCoinsValidator} class
-     * during validation to ensure that provided coin values match these allowed
-     * denominations.
+     * A set of allowed coin denominations used for validating coin values.
+     * This set is initialized using the predefined coin denominations from {@link CoinUtil#COIN_DENOMINATIONS},
+     * which represent valid coin values, such as 100, 50, 20, 10, and 5 cents.
      */
-    private static final Set<Integer> ALLOWED_COINS = Set.of(5, 10, 20, 50, 100);
+    private static final Set<Integer> ALLOWED_COINS = Collections.asSet(List.of(CoinUtil.COIN_DENOMINATIONS));
 
     /**
      * Validates whether the provided list of coin values meets the allowed denominations.

@@ -1,9 +1,13 @@
 package com.flapkap.vendingmachine.controller;
 
+import com.flapkap.vendingmachine.dto.BuyDTO;
+import com.flapkap.vendingmachine.mapper.TransactionMapper;
 import com.flapkap.vendingmachine.security.UserPrincipal;
 import com.flapkap.vendingmachine.service.TransactionService;
 import com.flapkap.vendingmachine.web.RestResponse;
+import com.flapkap.vendingmachine.web.request.BuyRequest;
 import com.flapkap.vendingmachine.web.request.DepositRequest;
+import com.flapkap.vendingmachine.web.response.BuyResponse;
 import com.flapkap.vendingmachine.web.response.DepositResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * The TransactionController class provides RESTful API endpoints for managing transactions
@@ -41,6 +47,14 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     /**
+     * A dependency responsible for mapping between transaction domain objects
+     * and their corresponding Data Transfer Objects (DTOs).
+     * It is used to facilitate the data conversion required by the controller
+     * for transaction-related operations.
+     */
+    private final TransactionMapper transactionMapper;
+
+    /**
      * Processes a deposit transaction by accepting a request containing coins to deposit.
      * Only users with the "BUYER" role are authorized to invoke this method.
      *
@@ -59,5 +73,24 @@ public class TransactionController {
         return RestResponse.ok(DepositResponse.builder()
                 .currentBalance(balance)
                 .build());
+    }
+
+    /**
+     * Handles product purchase requests by processing a list of products to buy.
+     * This method is restricted to authenticated users with the "BUYER" role.
+     *
+     * @param buyList A list of {@link BuyRequest} objects, representing the products to be purchased.
+     *                Each request in the list must adhere to the validation constraints.
+     * @param buyer   The authenticated user information, extracted from the security context.
+     * @return A {@link RestResponse} containing a {@link BuyResponse}, which includes details
+     * about the purchased products, the total spent amount, and any remaining change.
+     */
+    @Operation(summary = "Buy Products")
+    @PostMapping("/buy")
+    @PreAuthorize("hasRole('BUYER')")
+    public RestResponse<BuyResponse> buy(@Valid @RequestBody final List<BuyRequest> buyList,
+                                         @AuthenticationPrincipal final UserPrincipal buyer) {
+        final BuyDTO buyDTO = transactionService.buy(buyList, buyer.getId());
+        return RestResponse.ok(transactionMapper.toResponse(buyDTO));
     }
 }

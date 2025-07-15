@@ -11,8 +11,9 @@ import java.util.UUID;
  * It serves as an immutable representation of a product's core attributes.
  * The {@code ProductDTO} uses a record structure for immutability and concise syntax.
  * Fields:
+ * - {@code id}: The unique identified of the product
  * - {@code name}: The name of the product.
- * - {@code cost}: The monetary cost of the product, represented as a {@code double}.
+ * - {@code cost}: The monetary cost of the product, represented as a {@code Integer}.
  * - {@code amount}: The quantity of the product available, represented as an {@code Integer}.
  * - {@code description}: A textual description providing additional details about the product.
  * - {@code sellerId}: A unique identifier ({@link UUID}) representing the seller associated with the product.
@@ -21,8 +22,9 @@ import java.util.UUID;
  */
 @Builder
 public record ProductDTO(
+        UUID id,
         String name,
-        Double cost,
+        Integer cost,
         Integer amount,
         String description,
         UUID sellerId

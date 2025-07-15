@@ -20,7 +20,7 @@ import java.util.UUID;
 
 /**
  * Implementation of the {@link ProductService} interface, providing business logic
- * for handling operations related to products in the vending machine system.
+ * for handling operations related to boughtProducts in the vending machine system.
  * This class is annotated as a service component and leverages dependency injection
  * to access required services and repositories.
  *
@@ -32,7 +32,7 @@ import java.util.UUID;
 public class ProductServiceImpl implements ProductService {
     /**
      * Repository interface for managing {@link Product} entities, injected as a dependency
-     * for performing persistence operations related to products. This variable is used
+     * for performing persistence operations related to boughtProducts. This variable is used
      * by the {@code ProductServiceImpl} service to handle product-related data access,
      * including saving and retrieving product entities from the database.
      */
@@ -71,8 +71,19 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product).getId();
     }
 
+    @Override
+    public ProductDTO read(final UUID productId) {
+        final Product product = productRepository.findById(productId)
+                .orElseThrow(() -> ProductNotFoundException.builder()
+                        .productId(productId)
+                        .message("error.product.notFound")
+                        .build());
+
+        return productMapper.toDTO(product);
+    }
+
     /**
-     * Retrieves a list of all products and maps them to their response representation.
+     * Retrieves a list of all boughtProducts and maps them to their response representation.
      *
      * @return a list of {@code ProductResponse} objects, each representing a product
      * with its details such as ID, name, cost, amount, and description.

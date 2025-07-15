@@ -49,7 +49,7 @@ class ProductControllerTest {
     /**
      * Mocked instance of {@link ProductService} used for testing purposes within
      * {@code ProductControllerTest}. This mock allows for the simulation of product-related
-     * operations, such as creating new products, without invoking the actual service logic.
+     * operations, such as creating new boughtProducts, without invoking the actual service logic.
      */
     @MockitoBean
     private ProductService productService;
@@ -109,7 +109,7 @@ class ProductControllerTest {
      * Represents the cost of a product in the context of product-related tests.
      * This is a constant value used as a reference for testing scenarios.
      */
-    private static final Double PRODUCT_COST = 1500.0;
+    private static final Integer PRODUCT_COST = 1500;
 
     /**
      * Constant representing the product description for testing purposes.
@@ -172,13 +172,13 @@ class ProductControllerTest {
             .build();
 
     /**
-     * Tests the successful creation of a product using the POST /api/products endpoint.
+     * Tests the successful creation of a product using the POST /api/boughtProducts endpoint.
      * Validates the proper processing of the request and the expected response
      * when all required input data is provided and authorization is applied.
      */
     @Test
     @SneakyThrows
-    @DisplayName("POST /api/v1/products - Success")
+    @DisplayName("POST /api/v1/boughtProducts - Success")
     void createProduct_withValidDetails_shouldReturn201() {
         final ProductCreationRequest request = ProductCreationRequest.builder()
                 .name(PRODUCT_NAME)
@@ -200,14 +200,14 @@ class ProductControllerTest {
     }
 
     /**
-     * Tests the successful retrieval of all products using the GET /api/products endpoint.
+     * Tests the successful retrieval of all boughtProducts using the GET /api/boughtProducts endpoint.
      * Mocks the behavior of the productService.readAll() method to return a predefined
-     * list of products. The test also verifies that proper request headers, including
+     * list of boughtProducts. The test also verifies that proper request headers, including
      * authorization, are included in the request.
      */
     @Test
     @SneakyThrows
-    @DisplayName("GET /api/v1/products - Success")
+    @DisplayName("GET /api/v1/boughtProducts - Success")
     void readAllProducts_shouldReturn200() {
         given(productService.readAll()).willReturn(List.of(PRODUCT_RESPONSE));
 
@@ -222,14 +222,14 @@ class ProductControllerTest {
     }
 
     /**
-     * Tests the successful update of a product using the PATCH /api/products/{id} endpoint.
+     * Tests the successful update of a product using the PATCH /api/boughtProducts/{id} endpoint.
      * This test verifies that a valid product update request returns an HTTP 200 status code
      * with the correct response body. It mocks the behavior of the `productService.update` method
      * to simulate a successful update operation.
      */
     @Test
     @SneakyThrows
-    @DisplayName("PATCH /api/v1/products/{id} - Success")
+    @DisplayName("PATCH /api/v1/boughtProducts/{id} - Success")
     void updateProduct_withValidDetails_shouldReturn200() {
         final ProductUpdateRequest request = ProductUpdateRequest.builder()
                 .amount(UPDATE_PRODUCT_AMOUNT)
@@ -250,13 +250,13 @@ class ProductControllerTest {
     }
 
     /**
-     * Tests the successful deletion of a product using the DELETE /api/products/{id} endpoint.
+     * Tests the successful deletion of a product using the DELETE /api/boughtProducts/{id} endpoint.
      * Verifies that the API responds with an HTTP 204 No Content status code when a valid product ID is provided.
      * Ensures that the response payload and errors are both empty and that the proper authorization header is included.
      */
     @Test
     @SneakyThrows
-    @DisplayName("DELETE /api/v1/products/{id} - Success")
+    @DisplayName("DELETE /api/v1/boughtProducts/{id} - Success")
     void deleteProduct_withValidId_shouldReturn204() {
         mockMvc.perform(delete("/api/v1/products/" + PRODUCT_ID)
                         .contentType(MediaType.APPLICATION_JSON)

@@ -25,7 +25,7 @@ public record ProductResponse(
         String name,
 
         @Schema(description = "Product cost", example = "1500.0")
-        Double cost,
+        Integer cost,
 
         @Schema(description = "Product amount", example = "200")
         Integer amount,

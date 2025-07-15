@@ -137,7 +137,7 @@ class ProductServiceTest {
      * Represents the cost of a product in the context of product-related tests.
      * This is a constant value used as a reference for testing scenarios.
      */
-    private static final Double PRODUCT_COST = 1500.0;
+    private static final Integer PRODUCT_COST = 1500;
 
     /**
      * Constant representing the product description for testing purposes.
@@ -259,10 +259,10 @@ class ProductServiceTest {
     }
 
     /**
-     * Tests the functionality of retrieving all products from the `ProductService`.
+     * Tests the functionality of retrieving all boughtProducts from the `ProductService`.
      * The test ensures that:
      * - The returned list is not null.
-     * - The size of the returned list matches the expected number of products.
+     * - The size of the returned list matches the expected number of boughtProducts.
      * - The contents of the returned list match the expected `ProductResponse` objects.
      */
     @Test

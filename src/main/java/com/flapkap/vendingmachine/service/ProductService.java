@@ -10,7 +10,7 @@ import java.util.UUID;
 
 /**
  * Interface defining the contract for product-related operations within the application.
- * The ProductService provides methods for managing products, including creating products
+ * The ProductService provides methods for managing boughtProducts, including creating boughtProducts
  * and associating them with the corresponding seller entity.
  *
  * @author Mahmoud Shtayeh
@@ -28,7 +28,16 @@ public interface ProductService {
     UUID create(ProductDTO productDTO);
 
     /**
-     * Retrieves a list of all products and maps them to their response representation.
+     * Reads and retrieves the details of a product identified by the specified unique identifier.
+     *
+     * @param productId the unique identifier of the product to be retrieved
+     * @return a {@code ProductDTO} representing the product details, such as ID, name, cost, amount,
+     * description, and associated seller information
+     */
+    ProductDTO read(UUID productId);
+
+    /**
+     * Retrieves a list of all boughtProducts and maps them to their response representation.
      *
      * @return a list of {@code ProductResponse} objects, each representing a product
      * with its details such as ID, name, cost, amount, and description.

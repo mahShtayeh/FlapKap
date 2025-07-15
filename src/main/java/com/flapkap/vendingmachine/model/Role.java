@@ -6,7 +6,7 @@ package com.flapkap.vendingmachine.model;
  * level of access and the actions they are authorized to perform.
  * The roles include:
  * - BUYER: A user who can purchase items from the vending machine.
- * - SELLER: A user who can list and manage products available in the vending machine.
+ * - SELLER: A user who can list and manage boughtProducts available in the vending machine.
  *
  * @author Mahmoud Shtayeh
  */
