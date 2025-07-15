@@ -30,6 +30,18 @@ services:
       - postgres
     restart: unless-stopped
 
+  vendingmachine:
+    image: mahshtayeh227/vendingmachine
+    container_name: vendingmachine
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - postgres
+    depends_on:
+      - postgres
+
 networks:
   postgres:
     driver: bridge
