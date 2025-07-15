@@ -141,7 +141,6 @@ class AuthControllerTest {
         final RegistrationRequest sellerCreationRequest = RegistrationRequest.builder()
                 .username(SELLER_USERNAME)
                 .password(HASHED_PASSWORD)
-                .deposit(BALANCE)
                 .role(Role.SELLER)
                 .build();
 
@@ -177,7 +176,6 @@ class AuthControllerTest {
         final RegistrationRequest buyerCreationRequest = RegistrationRequest.builder()
                 .username(BUYER_USERNAME)
                 .password(HASHED_PASSWORD)
-                .deposit(BALANCE)
                 .role(Role.BUYER)
                 .build();
 

@@ -29,6 +29,7 @@ public interface UserMapper {
      * @param request the registration request containing user details.
      * @return a {@link UserDTO} object representing the user details in a Data Transfer Object format
      */
+    @Mapping(target = "deposit", constant = "0")
     @Mapping(source = "enabled", target = "enabled", defaultValue = "true")
     UserDTO toDTO(RegistrationRequest request);
 

@@ -71,15 +71,21 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product).getId();
     }
 
+    /**
+     * Retrieves a product by its unique identifier. If the product with the specified ID does not
+     * exist in the repository, a {@code ProductNotFoundException} is thrown.
+     *
+     * @param productId the unique identifier of the product to be retrieved.
+     * @return the {@code Product} object corresponding to the specified ID.
+     * @throws ProductNotFoundException if the product with the given {@code productId} is not found.
+     */
     @Override
-    public ProductDTO read(final UUID productId) {
-        final Product product = productRepository.findById(productId)
+    public Product read(final UUID productId) {
+        return productRepository.findById(productId)
                 .orElseThrow(() -> ProductNotFoundException.builder()
                         .productId(productId)
                         .message("error.product.notFound")
                         .build());
-
-        return productMapper.toDTO(product);
     }
 
     /**

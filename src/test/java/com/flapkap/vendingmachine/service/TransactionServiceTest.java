@@ -2,6 +2,8 @@ package com.flapkap.vendingmachine.service;
 
 import com.flapkap.vendingmachine.dto.BuyDTO;
 import com.flapkap.vendingmachine.dto.ProductDTO;
+import com.flapkap.vendingmachine.mapper.TransactionMapper;
+import com.flapkap.vendingmachine.model.Product;
 import com.flapkap.vendingmachine.model.Role;
 import com.flapkap.vendingmachine.model.User;
 import com.flapkap.vendingmachine.service.impl.TransactionServiceImpl;
@@ -47,6 +49,16 @@ class TransactionServiceTest {
      */
     @Mock
     private ProductService productService;
+
+    /**
+     * Mock instance of {@link TransactionMapper} used for testing purposes.
+     * The {@link TransactionMapper} is an interface that maps domain objects related to transactions
+     * and products to their corresponding Data Transfer Object (DTO) representations and vice versa.
+     * This mock is used in the unit tests of {@code TransactionServiceTest} to isolate and test
+     * the business logic without depending on the actual implementation of the mapping functionality.
+     */
+    @Mock
+    private TransactionMapper transactionMapper;
 
     /**
      * A mocked instance of {@link TransactionServiceImpl} injected for unit testing purposes.
@@ -165,11 +177,31 @@ class TransactionServiceTest {
             .build();
 
     /**
-     * A static, constant instance of {@link ProductDTO} used for testing purposes.
-     * This instance is immutable and intended to be used across multiple test cases within the test class to ensure
-     * consistency and reusability when interacting with {@code ProductDTO} objects.
+     * A predefined static instance of {@link ProductDTO} used for testing purposes within the
+     * {@code TransactionServiceTest} class.
+     * This instance represents a specific product with attributes initialized using the builder pattern.
+     * It is used in various test methods to verify functionality related to product transactions
+     * and operations.
+     * This constant aids in providing a consistent and controlled test environment by serving as
+     * a standard product configuration.
      */
     private static final ProductDTO PRODUCT_DTO = ProductDTO.builder()
+            .id(PRODUCT_ID)
+            .name(PRODUCT_NAME)
+            .amount(PRODUCT_AMOUNT)
+            .cost(PRODUCT_COST)
+            .build();
+
+    /**
+     * A predefined constant representing a {@link Product} entity used for testing purposes
+     * within the {@code TransactionServiceTest} class. This object is statically configured
+     * with the following attributes:
+     * - {@code id}: The unique identifier for the product.
+     * - {@code name}: The name of the product.
+     * - {@code amount}: The quantity of the product available in stock.
+     * - {@code cost}: The monetary cost of the product.
+     */
+    private static final Product PRODUCT = Product.builder()
             .id(PRODUCT_ID)
             .name(PRODUCT_NAME)
             .amount(PRODUCT_AMOUNT)
@@ -208,7 +240,8 @@ class TransactionServiceTest {
     @Test
     void buyProduct_withValidCoins_shouldReturnBuyDTO() {
         when(userService.read(BUYER_ID)).thenReturn(BUYER);
-        when(productService.read(PRODUCT_ID)).thenReturn(PRODUCT_DTO);
+        when(productService.read(PRODUCT_ID)).thenReturn(PRODUCT);
+        when(transactionMapper.toProductDTOs(List.of(PRODUCT))).thenReturn(List.of(PRODUCT_DTO));
 
         final BuyDTO buyDTO = transactionService.buy(List.of(BUY_REQUEST), BUYER_ID);
 

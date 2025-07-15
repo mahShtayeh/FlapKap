@@ -1,9 +1,10 @@
 package com.flapkap.vendingmachine.service.impl;
 
 import com.flapkap.vendingmachine.dto.BuyDTO;
-import com.flapkap.vendingmachine.dto.ProductDTO;
 import com.flapkap.vendingmachine.exception.InsufficientFundsException;
 import com.flapkap.vendingmachine.exception.UserNotFoundException;
+import com.flapkap.vendingmachine.mapper.TransactionMapper;
+import com.flapkap.vendingmachine.model.Product;
 import com.flapkap.vendingmachine.model.User;
 import com.flapkap.vendingmachine.service.ProductService;
 import com.flapkap.vendingmachine.service.TransactionService;
@@ -47,6 +48,13 @@ public class TransactionServiceImpl implements TransactionService {
     private final ProductService productService;
 
     /**
+     * A mapper used for transforming transaction-related entities between different layers of the application.
+     * This includes conversion between domain models and DTOs to facilitate interaction
+     * and data transfer across various components of the service.
+     */
+    private final TransactionMapper transactionMapper;
+
+    /**
      * Deposits a list of coins into a buyer's account and updates the buyer's deposit balance.
      *
      * @param buyerId the unique identifier of the buyer whose account will be credited
@@ -76,13 +84,13 @@ public class TransactionServiceImpl implements TransactionService {
     public BuyDTO buy(final List<BuyRequest> buyList, final UUID buyerId) {
         final User buyer = userService.read(buyerId);
 
-        final List<ProductDTO> boughtProducts = new ArrayList<>();
+        final List<Product> boughtProducts = new ArrayList<>();
         final Integer totalSpent = buyList.stream()
                 .map(buyRequest -> buyProduct(buyRequest, buyer, boughtProducts))
                 .reduce(0, Integer::sum);
 
         return BuyDTO.builder()
-                .boughtProducts(boughtProducts)
+                .boughtProducts(transactionMapper.toProductDTOs(boughtProducts))
                 .totalSpent(totalSpent)
                 .changes(CoinUtil.calculateChange(buyer.getDeposit()))
                 .build();
@@ -100,25 +108,26 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
-     * Executes the purchase of a specific product by a buyer. It calculates the total price
-     * for the requested quantity of the product, updates the buyer's deposit balance, and
-     * adds the product to the list of successfully purchased products.
+     * Executes the purchase of a product for a specified buyer. This method processes the
+     * transaction by checking sufficient funds, updating the buyer's deposit balance, reducing
+     * the product stock, and appending the purchased product to the provided list.
      *
-     * @param buyRequest     the {@link BuyRequest} containing the product ID and the quantity of the product to be purchased
-     * @param buyer          the {@link User} instance representing the buyer making the purchase
-     * @param boughtProducts the list of {@link ProductDTO} objects representing the products that have been purchased
-     * @return the total price calculated for the purchased product quantity
-     * @throws InsufficientFundsException if the buyer's deposit is insufficient to cover the purchase price
+     * @param buyRequest     the buy request containing the product ID and quantity to be purchased
+     * @param buyer          the buyer executing the purchase
+     * @param boughtProducts the list to which the purchased product will be added
+     * @return the total cost of the purchased product based on the quantity
+     * @throws InsufficientFundsException if the buyer's deposit is insufficient to cover the total cost
      */
-    private Integer buyProduct(final BuyRequest buyRequest, final User buyer, final List<ProductDTO> boughtProducts) {
-        final ProductDTO productDTO = productService.read(buyRequest.productId());
-        final Integer price = productDTO.cost() * buyRequest.amount();
+    private Integer buyProduct(final BuyRequest buyRequest, final User buyer, final List<Product> boughtProducts) {
+        final Product product = productService.read(buyRequest.productId());
+        final Integer price = product.getCost() * buyRequest.amount();
 
         AssertUtil.isTrue(buyer.getDeposit() > price,
                 () -> new InsufficientFundsException("error.transaction.insufficientFunds"));
 
         buyer.setDeposit(buyer.getDeposit() - price);
-        boughtProducts.add(productDTO);
+        product.setAmount(product.getAmount() - buyRequest.amount());
+        boughtProducts.add(product);
         return price;
     }
 }

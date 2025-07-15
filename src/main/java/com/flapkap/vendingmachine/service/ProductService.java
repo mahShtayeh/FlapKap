@@ -2,6 +2,7 @@ package com.flapkap.vendingmachine.service;
 
 import com.flapkap.vendingmachine.dto.ProductDTO;
 import com.flapkap.vendingmachine.exception.ProductNotFoundException;
+import com.flapkap.vendingmachine.model.Product;
 import com.flapkap.vendingmachine.web.response.ProductResponse;
 
 import java.nio.channels.AcceptPendingException;
@@ -28,13 +29,13 @@ public interface ProductService {
     UUID create(ProductDTO productDTO);
 
     /**
-     * Reads and retrieves the details of a product identified by the specified unique identifier.
+     * Retrieves a product by its unique identifier.
      *
-     * @param productId the unique identifier of the product to be retrieved
-     * @return a {@code ProductDTO} representing the product details, such as ID, name, cost, amount,
-     * description, and associated seller information
+     * @param productId the unique identifier of the product to be retrieved.
+     * @return the {@code Product} entity associated with the given unique identifier.
+     * Returns {@code null} if no product is found with the specified ID.
      */
-    ProductDTO read(UUID productId);
+    Product read(UUID productId);
 
     /**
      * Retrieves a list of all boughtProducts and maps them to their response representation.

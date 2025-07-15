@@ -2,10 +2,13 @@ package com.flapkap.vendingmachine.mapper;
 
 import com.flapkap.vendingmachine.dto.BuyDTO;
 import com.flapkap.vendingmachine.dto.ProductDTO;
+import com.flapkap.vendingmachine.model.Product;
 import com.flapkap.vendingmachine.web.response.BuyResponse;
 import com.flapkap.vendingmachine.web.response.ProductResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 /**
  * TransactionMapper is an interface that defines the mapping between domain objects and their
@@ -38,4 +41,18 @@ public interface TransactionMapper {
      * @return a {@link ProductResponse} representing the mapped product details as a response object.
      */
     ProductResponse toProductResponse(ProductDTO productDTO);
+
+    /**
+     * Converts a list of {@link Product} entities into a list of {@link ProductDTO} objects.
+     * This method facilitates the mapping of product entities to their corresponding
+     * Data Transfer Object (DTO) representations, which are typically used to transfer
+     * data between application layers.
+     *
+     * @param boughtProducts the list of {@link Product} entities to be converted into a list
+     *                       of {@link ProductDTO} objects. Each {@link Product} in the list
+     *                       contains details such as ID, name, cost, amount, description, and seller information.
+     * @return a list of {@link ProductDTO} objects that represent the mapped data of the input
+     * {@link Product} entities.
+     */
+    List<ProductDTO> toProductDTOs(List<Product> boughtProducts);
 }
